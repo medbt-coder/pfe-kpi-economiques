@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau de bord — KPI Économiques Horticoles | PFE IAV Hassan II — CHA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #FBFAF6;
+    --surface: #FFFFFF;
+    --surface-2: #F5F2EA;
+    --ink: #1A1815;
+    --ink-soft: #3A362D;
+    --muted: #807A6D;
+    --muted-2: #A8A296;
+    --border: #E8E3D6;
+    --border-strong: #D4CEBE;
+    --accent: #0F4F3A;
+    --accent-2: #1A6B4E;
+    --warm: #C2410C;
+    --shadow-sm: 0 1px 2px rgba(26,24,21,0.04), 0 1px 3px rgba(26,24,21,0.06);
+    --shadow-md: 0 4px 12px rgba(26,24,21,0.06), 0 2px 4px rgba(26,24,21,0.04);
+    --shadow-lg: 0 24px 48px rgba(26,24,21,0.10), 0 8px 16px rgba(26,24,21,0.06);
+    --radius-sm: 6px;
+    --radius: 12px;
+    --radius-lg: 18px;
+    --font-display: "Fraunces", Georgia, serif;
+    --font-body: "IBM Plex Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* --- HERO --- */
+  .hero {
+    position: relative;
+    padding: 64px 48px 72px;
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(15,79,58,0.05), transparent 50%),
+      radial-gradient(ellipse at 10% 100%, rgba(194,65,12,0.04), transparent 60%),
+      linear-gradient(180deg, #FDFBF5 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(26,24,21,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,24,21,0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.6), transparent 75%);
+  }
+  .hero-inner { position: relative; max-width: 1400px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    padding: 6px 12px;
+    background: rgba(15,79,58,0.06);
+    border: 1px solid rgba(15,79,58,0.15);
+    border-radius: 100px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(15,79,58,0.15);
+  }
+  h1.hero-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(38px, 6.2vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    color: var(--ink);
+    max-width: 1100px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--ink-soft);
+    max-width: 760px;
+    line-height: 1.55;
+    margin: 0 0 36px;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap;
+    gap: 8px 28px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+    margin-top: 8px;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 8px; }
+  .hero-meta span::before {
+    content: ""; width: 4px; height: 4px;
+    background: var(--accent); border-radius: 50%;
+  }
+
+  /* --- STATS STRIP --- */
+  .stats {
+    max-width: 1400px;
+    margin: -36px auto 0;
+    padding: 0 48px;
+    position: relative; z-index: 2;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+  .stat {
+    background: var(--surface);
+    padding: 26px 28px 24px;
+    position: relative;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variation-settings: "opsz" 144;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .stat-value .unit {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  .stat-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* --- SECTION GENERIC --- */
+  section.block {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 72px 48px 0;
+  }
+  .section-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 32px; flex-wrap: wrap;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 18px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-variation-settings: "opsz" 96;
+    font-size: 32px;
+    margin: 0;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .section-lead {
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 540px;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* --- FAMILIES GRID --- */
+  .families {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .fam-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 22px 20px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+  .fam-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 2px transparent;
+    pointer-events: none;
+    transition: box-shadow 0.25s;
+  }
+  .fam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .fam-card.active::after {
+    box-shadow: inset 0 0 0 2px var(--fc);
+  }
+  .fam-card.active {
+    background: var(--fc-bg);
+  }
+  .fam-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .fam-num {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--fc);
+    padding: 3px 9px;
+    background: var(--fc-soft);
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .fam-count {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 28px;
+    color: var(--fc);
+    line-height: 1;
+  }
+  .fam-count small {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+  .fam-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.3;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  /* --- TOOLBAR --- */
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 36px 0 24px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .search-input {
+    flex: 1; min-width: 220px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 10px 14px 10px 38px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23807A6D' stroke-width='2'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    transition: all 0.18s;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: var(--surface);
+    box-shadow: 0 0 0 3px rgba(15,79,58,0.1);
+  }
+  .filter-pills {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .pill {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink-soft);
+    border-radius: 100px;
+    padding: 7px 13px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-weight: 500;
+  }
+  .pill:hover { background: var(--surface-2); }
+  .pill.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .count-info {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* --- KPI GRID --- */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px 18px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 220px;
+    animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .kpi-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--fc);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--fc);
+    box-shadow: var(--shadow-md);
+  }
+  .kpi-card:hover::before { transform: scaleX(1); }
+  .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .kpi-num {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--fc);
+    background: var(--fc-soft);
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .kpi-fam-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+  }
+  .kpi-short {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.2;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .kpi-title {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .kpi-formula {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    padding: 9px 11px;
+    border-radius: 6px;
+    border-left: 2px solid var(--fc);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .kpi-bottom {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 4px;
+    border-top: 1px dashed var(--border);
+  }
+  .kpi-tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    background: var(--bg);
+    padding: 4px 9px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .kpi-tag.unit { color: var(--fc); border-color: var(--fc-soft); background: var(--fc-bg); font-weight: 500; }
+
+  /* --- MODAL --- */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(26,24,21,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 24px;
+    overflow-y: auto;
+    animation: fadeIn 0.2s;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    max-width: 920px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .modal-head {
+    padding: 28px 36px 24px;
+    background: var(--fc-bg);
+    border-bottom: 1px solid var(--fc-soft);
+    position: relative;
+  }
+  .modal-head .kpi-num { margin-bottom: 14px; display: inline-block; }
+  .modal-head h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variation-settings: "opsz" 96;
+    font-size: 30px;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    padding-right: 50px;
+  }
+  .modal-fam-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fc);
+  }
+  .modal-close {
+    position: absolute;
+    top: 22px; right: 22px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .modal-body {
+    padding: 28px 36px 36px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .modal-body h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fc);
+    margin: 26px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-body h3:first-child { margin-top: 0; }
+  .modal-body p {
+    margin: 0 0 14px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .modal-formulas {
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    border-left: 3px solid var(--fc);
+  }
+  .modal-formula {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .modal-formula + .modal-formula { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-strong); }
+  .modal-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .modal-meta {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .modal-meta-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .modal-meta-value {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .modal-list { padding-left: 20px; margin: 8px 0 14px; }
+  .modal-list li {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .viz-box {
+    margin-top: 8px;
+    padding: 16px;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    position: relative;
+  }
+  .viz-box::before {
+    content: "Visualisation recommandée";
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fc);
+    margin-bottom: 8px;
+  }
+
+  /* --- CHARTS SECTION --- */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 18px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .chart-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+  .chart-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0 0 4px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .chart-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .chart-badge {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--fc);
+    background: var(--fc-soft);
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-note {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    border-left: 2px solid var(--border-strong);
+  }
+
+  /* --- FOOTER --- */
+  footer {
+    margin-top: 96px;
+    padding: 48px 48px 36px;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, transparent, rgba(15,79,58,0.02));
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 36px;
+  }
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .footer-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer-col h4 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; }
+  .footer-col li {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+  }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 28px auto 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* --- EMPTY STATE --- */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 900px) {
+    .hero { padding: 48px 24px 56px; }
+    .stats { padding: 0 24px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    section.block { padding: 56px 24px 0; }
+    .footer-inner { grid-template-columns: 1fr; }
+    h1.hero-title { font-size: 40px; }
+    .section-title { font-size: 26px; }
+    .modal-head, .modal-body { padding-left: 24px; padding-right: 24px; }
+  }
+  @media (max-width: 500px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat-value { font-size: 36px; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; }
+    .toolbar, .modal-backdrop { display: none !important; }
+    .kpi-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Tableau de bord — PFE IAV Hassan II — CHA</div>
+    <h1 class="hero-title">
+      30 indicateurs <em>économiques</em><br>
+      pour le pilotage des exploitations horticoles
+    </h1>
+    <p class="hero-sub">
+      Cadre opérationnel structuré en <strong>7 familles d'indicateurs</strong>, conçu pour piloter la performance économique des exploitations marocaines de maraîchage, d'arboriculture fruitière et de fruits rouges — depuis le chiffre d'affaires jusqu'à l'efficience économique de la récolte.
+    </p>
+    <div class="hero-meta">
+      <span>Région Souss-Massa</span>
+      <span>Filières tomate, poivron, agrumes, fruits rouges</span>
+      <span>Cibles définies par l'exploitation — benchmarks indicatifs</span>
+      <span>Source : document consolidé 30 fiches</span>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-label">Indicateurs</div>
+      <div class="stat-value" data-count="30">0</div>
+      <div class="stat-desc">Fiches consolidées et harmonisées</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Familles thématiques</div>
+      <div class="stat-value" data-count="7">0</div>
+      <div class="stat-desc">Du CA à la récolte, en passant par la trésorerie</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Filières couvertes</div>
+      <div class="stat-value" data-count="4">0</div>
+      <div class="stat-desc">Maraîchage · arboriculture · fruits rouges</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Niveau d'agrégation</div>
+      <div class="stat-value">2<span class="unit">niveaux</span></div>
+      <div class="stat-desc">Bloc / culture → exploitation</div>
+    </div>
+  </div>
+</div>
+
+<section class="block">
+  <div class="section-head">
+    <div>
+      <div class="section-num">01 — Organisation</div>
+      <h2 class="section-title">Les 7 familles d'indicateurs</h2>
+    </div>
+    <p class="section-lead">
+      Cliquez sur une famille pour filtrer les fiches correspondantes. Chaque famille répond à une question de pilotage spécifique : combien je vends, combien ça me coûte, qu'est-ce qu'il me reste, et avec quelle efficience.
+    </p>
+  </div>
+  <div class="families" id="familiesGrid"></div>
+</section>
+
+<section class="block" id="catalogue">
+  <div class="section-head">
+    <div>
+      <div class="section-num">02 — Catalogue</div>
+      <h2 class="section-title">Les 30 indicateurs en détail</h2>
+    </div>
+    <p class="section-lead">
+      Chaque carte présente la formule de calcul, l'unité et la fréquence de mesure. Cliquez pour ouvrir la fiche complète (définition, sources, plan d'action, visualisation recommandée).
+    </p>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un KPI (ex. marge, eau, DSO…)">
+    <div class="filter-pills" id="filterPills">
+      <button class="pill active" data-fam="0">Tous · 30</button>
+    </div>
+    <div class="count-info" id="countInfo">30 indicateurs affichés</div>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+</section>
+
+<section class="block">
+  <div class="section-head">
+    <div>
+      <div class="section-num">03 — Visualisations</div>
+      <h2 class="section-title">Exemples illustratifs par famille</h2>
+    </div>
+    <p class="section-lead">
+      Graphiques alimentés par des données indicatives — un exemple type par famille, conforme aux visualisations recommandées dans les fiches KPI. Données fictives à des fins d'illustration.
+    </p>
+  </div>
+
+  <div class="charts-grid">
+
+    <div class="chart-card" style="--fc:#1E3A8A;--fc-bg:#EFF6FF;--fc-soft:#DBEAFE">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">CA cumulé vs cible budgétaire</h3>
+          <p class="chart-sub">KPI n°1 — Tomate sous serre, campagne 2024-25</p>
+        </div>
+        <div class="chart-badge">Famille 1 · CA</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chCA"></canvas></div>
+      <div class="chart-note">Courbe cumulée bi-canal (Export + Local) comparée à la cible interne définie par l'exploitation.</div>
+    </div>
+
+    <div class="chart-card" style="--fc:#9A3412;--fc-bg:#FFF7ED;--fc-soft:#FFEDD5">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">Structure des coûts variables (SCV)</h3>
+          <p class="chart-sub">KPI n°6 — Poivron sous serre, exemple terrain</p>
+        </div>
+        <div class="chart-badge">Famille 2 · Coûts</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chSCV"></canvas></div>
+      <div class="chart-note">Décomposition en % du total des charges variables. Permet d'identifier les postes à fort levier d'optimisation.</div>
+    </div>
+
+    <div class="chart-card" style="--fc:#065F46;--fc-bg:#ECFDF5;--fc-soft:#D1FAE5">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">Suivi de marge cumulée (SMC)</h3>
+          <p class="chart-sub">KPI n°14 — Marge nette progressive · MAD/ha</p>
+        </div>
+        <div class="chart-badge">Famille 3 · Marge</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chSMC"></canvas></div>
+      <div class="chart-note">Le point de basculement vers la zone positive correspond au seuil de rentabilité atteint.</div>
+    </div>
+
+    <div class="chart-card" style="--fc:#5B21B6;--fc-bg:#F5F3FF;--fc-soft:#EDE9FE">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">Productivité comparée des facteurs</h3>
+          <p class="chart-sub">KPI n°15-17 — MO, eau, foncier</p>
+        </div>
+        <div class="chart-badge">Famille 4 · Productivité</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chProd"></canvas></div>
+      <div class="chart-note">Radar comparant la productivité de chaque facteur de production vs cible interne (100 = cible atteinte).</div>
+    </div>
+
+    <div class="chart-card" style="--fc:#155E75;--fc-bg:#ECFEFF;--fc-soft:#CFFAFE">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">DSO vs DPO — équilibre de trésorerie</h3>
+          <p class="chart-sub">KPI n°18-19 — Évolution sur 6 mois</p>
+        </div>
+        <div class="chart-badge">Famille 5 · Trésorerie</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chDSODPO"></canvas></div>
+      <div class="chart-note">DSO > DPO indique un besoin de fonds de roulement à financer. Écart à surveiller en continu.</div>
+    </div>
+
+    <div class="chart-card" style="--fc:#991B1B;--fc-bg:#FEF2F2;--fc-soft:#FEE2E2">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">Coût des pertes post-récolte</h3>
+          <p class="chart-sub">KPI n°21 — Décomposition par cause</p>
+        </div>
+        <div class="chart-badge">Famille 6 · Pertes</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chPertes"></canvas></div>
+      <div class="chart-note">Pareto des causes — concentrer les actions correctives sur les 2-3 postes dominants.</div>
+    </div>
+
+    <div class="chart-card" style="--fc:#854D0E;--fc-bg:#FEFCE8;--fc-soft:#FEF3C7"><div class="chart-head"><div><h3 class="chart-title">Valeur Nette Générée par l'Ouvrier (VNGO)</h3><p class="chart-sub">KPI n°29 — Évolution journalière · 14 jours</p></div><div class="chart-badge">Famille 7 · Récolte</div></div><div class="chart-wrap"><canvas id="chVNGO"></canvas></div><div class="chart-note">VNGO = CA récolte − (Coût MO + Cq + Cp). Indicateur de pilotage quotidien de la performance des équipes de récolte.</div></div>
+
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Tableau de bord KPI Économiques</div>
+      <div class="footer-text">
+        Projet de Fin d'Études — Évaluation de la performance technique et économique des exploitations horticoles dans la région du Souss-Massa.<br><br>
+        Méthodologie : cibles définies par l'exploitation à partir de son budget prévisionnel ; benchmarks sectoriels indicatifs et non normatifs ; agrégation à deux niveaux bloc/culture → exploitation.
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Encadrement</h4>
+      <ul>
+        <li>M. Elomari</li>
+        <li>M. Soufiane Bouri</li>
+        <li>M. Youssef Kassel</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Institution</h4>
+      <ul>
+        <li>IAV Hassan II</li>
+        <li>Complexe Horticole d'Agadir</li>
+        <li>Région Souss-Massa, Maroc</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Document consolidé — 30 fiches KPI économiques</span>
+    <span>Tableau de bord dynamique · Données illustratives</span>
+  </div>
+</footer>
+
+<script>
+const KPIS = [{"num": 1, "short": "CA à Date", "title": "Chiffre d’Affaires à Date (CA Export & CA Marché Local)", "family": 1, "definition": "Le Chiffre d’Affaires à Date (CA-YTD) mesure la valeur cumulée des ventes réalisées depuis le début de la campagne jusqu’à la date d’arrêté. Il est ventilé en deux composantes : (i) CA Export, valeur des ventes destinées aux marchés extérieurs ; (ii) CA Marché Local, valeur des ventes écoulées sur le marché intérieur (marchés de gros, GMS, industrie, circuits courts). CA Total = CA Export + CA Marché Local. Cette ventilation est essentielle car les deux canaux présentent des structures de prix, ", "objective": "Piloter la génération de revenus par canal de commercialisation, mesurer l’avancement vs. budget prévisionnel et orienter les arbitrages d’allocation (volumes, calibres, fenêtres de récolte) entre débouchés.", "formulas": ["CA Export = Σ (kg expédiés × prix de vente FOB ou départ station)", "CA Marché Local = Σ (kg livrés × prix de vente net)", "CA Total = CA Export + CA Marché Local"], "unite": "KMAD (cumul depuis début de campagne).", "sources": ["Bons de livraison et bons d’expédition station de conditionnement", "Factures de vente (export et local)", "Relevés de la cellule commerciale ; ERP ; registres coopérative ou groupement exportateur"], "freq": "Hebdomadaire en pleine campagne ; mensuelle en intercampagne. Clôture cumulée en fin de campagne.", "owner": "Responsable commercial de l’exploitation (ou directeur de la station de conditionnement / gérant pour les structures de taille modeste), en lien avec ", "actions": ["Écart négatif sur CA Export : analyser causes (prix FOB en baisse, refus qualité, retards logistiques, taux de change défavorable), renégocier avec acheteurs, repositionner sur fenêtres de prix porteu", "Écart négatif sur CA Marché Local : revoir mix de circuits (gros / GMS / transformation), arbitrer report de volumes vers l’export si éligibles.", "Écart positif : sécuriser la performance (capacités logistiques, trésorerie), documenter les bonnes pratiques.", "Écart sur le mix Export/Local : confronter à la stratégie initiale et arbitrer les volumes restants."], "viz": "Courbe de CA cumulé vs. cible budgétaire (deux séries : Export et Local), histogramme empilé hebdomadaire CA Export / CA Local par semaine, et indicateur de % d’atteinte du budget par canal."}, {"num": 2, "short": "CA / hectare", "title": "Chiffre d’Affaires à Date par hectare (CA-YTD/ha)", "family": 1, "definition": "Chiffre d’Affaires à Date rapporté à la surface productive, ventilé en : CA Export/ha (revenu export cumulé par hectare en production), CA Marché Local/ha (revenu local cumulé par hectare en production), CA Total/ha (somme des deux). Indicateur de productivité économique du foncier, permettant la comparaison entre parcelles, variétés, conduites techniques, et entre exploitations de tailles différentes.", "objective": "Mesurer l’efficience économique de la mobilisation du foncier et orienter les choix variétaux, les itinéraires techniques et l’allocation parcellaire entre canaux de commercialisation.", "formulas": ["CA Export/ha = CA Export cumulé (KMAD) ÷ Surface productive (ha)", "CA Marché Local/ha = CA Marché Local cumulé (KMAD) ÷ Surface productive (ha)", "CA Total/ha = CA Total cumulé ÷ Surface productive (ha)"], "unite": "KMAD/ha (cumul depuis début de campagne).", "sources": ["Numérateur : factures, bons d’expédition, ERP commercial", "Dénominateur : registre parcellaire, plan de culture campagne, cadastre interne, données SIG si disponibles"], "freq": "Hebdomadaire en pleine campagne ; mensuelle en intercampagne ; bilan en fin de campagne.", "owner": "Responsable commercial en lien avec le chef de culture / responsable production et le contrôleur de gestion.", "actions": ["Écart négatif côté numérateur : voir plan d’action KPI CA-YTD (prix, mix canaux, volumes commercialisés).", "Écart négatif côté dénominateur : vérifier la surface productive renseignée (parcelles improductives à exclure).", "Identifier les parcelles à faible CA/ha (variété en perte de vitesse, conduite défaillante, problème sanitaire) et arbitrer renouvellement / reconversion.", "Écart positif : capitaliser sur les parcelles performantes pour orienter les prochains plans de plantation."], "viz": "Courbe de CA/ha cumulé vs. cible (deux séries Export et Local), histogramme comparatif par parcelle/bloc en fin de campagne, tableau de bord croisé CA/ha × variété × âge du verger."}, {"num": 3, "short": "PMP", "title": "Prix Moyen Pondéré à Date (PMP)", "family": 1, "definition": "Prix de vente moyen réalisé depuis le début de la campagne, pondéré par les volumes effectivement commercialisés. Reflète la valorisation réelle, et non un prix nominal de référence.", "objective": "Piloter la valorisation commerciale de la production et évaluer la performance du mix marché/calibre/variété/circuit par rapport à la stratégie de commercialisation.", "formulas": ["PMP = Chiffre d’affaires cumulé à date (net de commissions) ÷ Quantité cumulée vendue à date"], "unite": "MAD/kg (ou MAD/colis si l’exploitation raisonne en colis standardisé).", "sources": ["Bons de livraison et factures de vente", "États de la station de conditionnement", "Relevés de la coopérative ou de l’exportateur", "Comptabilité analytique"], "freq": "Hebdomadaire en pleine campagne ; mensuelle hors pic ; cumul à date actualisé à chaque clôture.", "owner": "Responsable commercial de l’exploitation, en lien avec le chef de culture et le contrôleur de gestion.", "actions": ["Décomposer l’écart : effet prix (par circuit/calibre) vs. effet mix (répartition des volumes).", "Réviser l’allocation des volumes entre circuits (export / local / industrie).", "Ajuster le calendrier de récolte et d’expédition selon les fenêtres de prix.", "Renégocier ou diversifier les clients et contrats.", "Revoir le tri/calibrage en station pour améliorer la part des catégories à plus forte valeur."], "viz": "Courbe cumulée du PMP à date superposée à la cible interne, avec barres hebdomadaires des volumes vendus en arrière-plan, complétée d’un histogramme empilé du mix (part de CA par circuit) pour lire l’effet mix."}, {"num": 4, "short": "TPC", "title": "Taux de Produits Commercialisables (TPC)", "family": 1, "definition": "Part de la récolte effectivement valorisée par circuit de vente. Décliné en 3 sous-indicateurs complémentaires, chacun associé à son chiffre d’affaires (CA) pour relier volume et valeur.", "objective": "Maximiser la valorisation de la récolte en orientant les volumes vers les circuits les plus rémunérateurs (export prioritaire), tout en limitant les pertes post-récolte et l’écart de production déclassé.", "formulas": ["TPC global = (kg vendus tous circuits ÷ kg récoltés) × 100", "TPC Export = (kg exportés ÷ kg récoltés) × 100", "TPC Écart station = (kg écart vendus à la station ÷ kg récoltés) × 100", "TPC Marché local = (kg marché local ÷ kg récoltés) × 100"], "unite": "% (volume) pour les sous-indicateurs ; MAD pour les CA associés (ou MAD/ha pour comparaison inter-pa", "sources": ["Bons de réception station (kg exportés, kg écart)", "Bons de livraison marché local / mandataire", "Fiches de récolte parcellaires (kg récoltés bruts)", "Factures et bordereaux de paiement (prix réels par circuit)"], "freq": "Par passage de récolte (hebdomadaire en pleine campagne) ; consolidation mensuelle et bilan de fin de campagne.", "owner": "Responsable de production / Chef de culture, en coordination avec le responsable commercial pour la valorisation (CA).", "actions": ["TPC Export < cible : auditer calibrage, état sanitaire, programme phytosanitaire et conduite (irrigation, fertilisation) ; revoir calendrier de récolte ; vérifier manutention et transport jusqu’à la s", "TPC Écart station > cible : analyser causes de déclassement (calibre, défauts visuels, maladies, dégâts mécaniques), renforcer le tri pré-récolte.", "TPC Marché local élevé non planifié : signal d’un problème qualité export — investigation technique prioritaire.", "Taux de perte élevé : revoir logistique post-récolte (délais, chaîne du froid, conditionnement champ)."], "viz": "Graphique en barres empilées 100 % par parcelle / variété / mois (Export / Écart / Local / Pertes) ; double axe barres % volumes + courbe CA par circuit ; tableau de bord cible vs. réalisé par sous-indicateur."}, {"num": 5, "short": "CR/kg", "title": "Coût de revient par kg à date (CR/kg)", "family": 2, "definition": "Coût de revient unitaire à date. Cumul, depuis le démarrage du cycle jusqu’à la date d’analyse, de l’ensemble des charges engagées (fixes et variables, directes et indirectes) rapporté au tonnage cumulé récolté sur la même période. Indicateur de pilotage en cours de campagne, recalculé à chaque arrêté.", "objective": "Maîtriser la structure de coûts par unité produite et sécuriser la marge brute prévisionnelle de l’exploitation/parcelle.", "formulas": ["CR/kg à date = (CFD + CFI + CVD + CVI) cumulés à date ÷ Tonnage récolté cumulé à date"], "unite": "MAD/kg (ou DH/kg). À décliner par parcelle, variété et filière.", "sources": ["Comptabilité analytique de l’exploitation (clés de répartition documentées pour CFI et CVI)", "Fiches de chantier / bons de travaux (main-d’œuvre)", "Bons de sortie magasin (intrants, conditionnement)", "Compteurs eau/énergie ou relevés station de pompage", "Bons de pesée / registre de récolte (tonnage)"], "freq": "Mensuelle en routine ; hebdomadaire en pleine période de récolte. Recalcul cumulé à chaque arrêté.", "owner": "Contrôleur de gestion agricole / Responsable administratif et financier, en lien avec le Chef de culture (fiabilité des données de chantier et de pesé", "actions": ["Décomposer l’écart par poste (CFD / CFI / CVD / CVI) puis par nature (prix vs. quantité).", "Vérifier la cohérence du tonnage cumulé : un retard de production gonfle mécaniquement le CR/kg.", "Si dérive sur CVD : auditer consommations d’intrants, productivité de la main-d’œuvre, pertes au conditionnement.", "Si dérive sur charges fixes : revoir clés de répartition et taux d’absorption (sous-activité parcellaire).", "Replanifier les chantiers restants et actualiser la prévision de fin de campagne (CR/kg projeté)."], "viz": "Courbe cumulée CR/kg à date vs. cible budgétaire (axe temps : semaines/mois) ; barre empilée de décomposition du coût cumulé par poste (CFD, CFI, CVD, CVI) ; tableau de bord parcelle × variété avec code couleur sur l’écart relatif."}, {"num": 6, "short": "SCV", "title": "Structure des Coûts Variables (SCV)", "family": 2, "definition": "Répartition en pourcentage de chaque poste de charge variable (intrants, main-d’œuvre, eau-énergie, conditionnement, transport, etc.) dans le total des coûts variables de l’exploitation ou de la culture.", "objective": "Identifier les postes dominants du coût variable pour orienter les leviers d’optimisation (négociation fournisseurs, mécanisation, pilotage de l’irrigation, productivité MO) et piloter la compétitivité-coût.", "formulas": ["Part du poste i (%) = (Coût du poste i ÷ Coût variable total) × 100"], "unite": "Pourcentage (%) du coût variable total. À compléter par la valeur absolue en MAD/ha ou MAD/kg pour a", "sources": ["Comptabilité analytique de l’exploitation", "Journaux de paie", "Factures fournisseurs", "Relevés de consommation (compteurs eau/électricité, factures gasoil)", "Bons de livraison station"], "freq": "Mensuelle en cours de campagne (suivi de dérive) ; consolidée en fin de cycle cultural ou de campagne annuelle.", "owner": "Responsable administratif et financier de l’exploitation, en lien avec le chef de culture pour la validation des affectations analytiques.", "actions": ["Poste intrants en dépassement : audit des prix d’achat, regroupement de commandes, révision du plan de fertilisation/protection.", "Poste MO en dépassement : analyse de la productivité (kg/JT, h/ha), réorganisation des chantiers, mécanisation ciblée.", "Poste eau-énergie en dépassement : contrôle des fuites, calage des tours d’eau, audit énergétique des stations de pompage.", "Poste conditionnement/transport : renégociation des contrats, optimisation des rotations logistiques."], "viz": "Diagramme circulaire (camembert) ou barre empilée à 100 % pour la composition ; histogramme comparatif réalisé vs. budget par poste ; courbe d’évolution mensuelle des parts dominantes."}, {"num": 7, "short": "% CV/CA", "title": "% Charges Variables / CA", "family": 2, "definition": "Part des charges variables dans le chiffre d’affaires. Mesure le poids des charges proportionnelles au volume produit (intrants, main-d’œuvre saisonnière, eau, énergie de production, emballages, transport) rapporté aux ventes.", "objective": "Maîtriser la structure de coûts opérationnels et préserver la marge sur coûts variables, levier direct de rentabilité à court terme.", "formulas": ["% CV/CA = (Charges Variables ÷ Chiffre d’Affaires) × 100"], "unite": "Pourcentage (%).", "sources": ["Comptabilité analytique de l’exploitation (grand livre, journaux d’achats)", "Fiches de paie saisonnier", "Relevés de consommation (eau, énergie, intrants)", "Factures de conditionnement et transport", "État des ventes (station/coopérative/export)"], "freq": "Mensuelle en suivi opérationnel ; consolidation par campagne (clôture) pour analyse stratégique.", "owner": "Responsable administratif et financier ou contrôleur de gestion ; en exploitation de petite taille, le chef d’exploitation.", "actions": ["Décomposer le ratio par poste (intrants / MO / eau-énergie / conditionnement-transport) pour isoler la dérive.", "Auditer les consommations techniques (doses d’engrais, pesticides, eau d’irrigation) vs itinéraire technique de référence.", "Renégocier les contrats fournisseurs ; mutualiser les achats (groupements).", "Revoir la productivité de la main-d’œuvre saisonnière (rendement de cueillette, encadrement).", "Si dérive liée à un effet prix (intrants), réviser la cible budgétaire de la campagne suivante."], "viz": "Courbe mensuelle réalisé vs cible interne sur la campagne ; en complément, diagramme en barres empilées de la décomposition du %CV/CA par poste de charge."}, {"num": 8, "short": "% CF/CA", "title": "% Charges Fixes / CA", "family": 2, "definition": "Part des charges fixes dans le chiffre d’affaires. Mesure le poids des charges structurelles, indépendantes du volume produit à court terme (amortissements, MO permanente, loyers/fermages, assurances, frais administratifs, entretien des infrastructures) rapporté aux ventes.", "objective": "Apprécier le poids de la structure et le seuil de rentabilité ; piloter le levier d’exploitation et la capacité d’absorption en cas de baisse de production ou de prix.", "formulas": ["% CF/CA = (Charges Fixes ÷ Chiffre d’Affaires) × 100"], "unite": "Pourcentage (%).", "sources": ["Comptabilité générale (compte de résultat)", "Tableau d’amortissements", "Contrats (fermage, leasing, assurances)", "États de paie de la MO permanente", "Bilan annuel"], "freq": "Annuelle (clôture de campagne) ; suivi trimestriel possible pour les exploitations à comptabilité analytique mensualisée.", "owner": "Responsable administratif et financier ou contrôleur de gestion ; en exploitation familiale, le chef d’exploitation avec appui du comptable.", "actions": ["Vérifier si l’écart provient du numérateur (dérive des CF : sureffectif permanent, charges externes mal maîtrisées) ou du dénominateur (sous-réalisation du CA).", "Optimiser le taux d’utilisation des actifs fixes (serres, équipements d’irrigation, station de conditionnement) — éviter la sous-charge.", "Étudier les leviers de revenu additionnel sur la même structure (diversification, allongement de la période de production, prestations).", "Réexaminer les contrats récurrents (fermage, leasing, assurances) au renouvellement.", "Si CF structurellement trop élevées : repenser le dimensionnement lors du prochain plan d’investissement."], "viz": "Histogramme annuel pluriannuel (réalisé vs cible) avec courbe d’évolution du CA superposée ; complément utile : graphique du seuil de rentabilité (point mort) intégrant CF et marge sur CV."}, {"num": 9, "short": "IPE", "title": "Indice de Pression Économique (IPE)", "family": 2, "definition": "Ratio mesurant la part du prix de vente absorbée par le coût de production unitaire. Il traduit le niveau de tension entre les coûts engagés et la valorisation commerciale du produit. Lecture : IPE < 1 → exploitation bénéficiaire ; IPE = 1 → seuil de rentabilité (point mort) ; IPE > 1 → vente à perte.", "objective": "Surveiller la marge de sécurité économique de l’exploitation et anticiper le risque de basculement en perte avant la clôture de campagne.", "formulas": ["IPE = Coût de production unitaire (MAD/kg) ÷ Prix de vente moyen (MAD/kg)"], "unite": "Ratio sans dimension (souvent exprimé en %).", "sources": ["Numérateur : comptabilité analytique (charges opérationnelles + amortissements rapportés au tonnage commercialisé)", "Dénominateur : bordereaux de vente, factures station/coopérative, relevés de prix marché"], "freq": "Mensuelle en cours de campagne (suivi dynamique) ; à la clôture de campagne (bilan définitif par parcelle/filière).", "owner": "Responsable administratif et financier de l’exploitation, en coordination avec le chef de culture pour la validation des données techniques.", "actions": ["Dérive du numérateur : audit des postes de charges (intrants, main-d’œuvre, énergie) ; recherche de leviers d’optimisation technique.", "Dérive du dénominateur : réexamen du calendrier de récolte, du canal de commercialisation, du calibrage et du tri qualitatif.", "Dérive combinée : revue stratégique de l’assolement et du positionnement variétal."], "viz": "Jauge à seuil mobile (cible interne au centre) ou courbe d’évolution mensuelle avec ligne horizontale à IPE = 1 (point mort) et bande de cible interne."}, {"num": 10, "short": "CPTE", "title": "Coût Pondéré de Transport Externe (CPTE)", "family": 2, "definition": "Coût moyen du transport sous-traité des produits depuis l’exploitation vers l’unité de conditionnement (station) ou le marché, pondéré par les volumes effectivement expédiés. La pondération neutralise les biais liés à la variation simultanée des tarifs unitaires et des charges utiles entre expéditions.", "objective": "Maîtriser le coût logistique aval, sécuriser la marge sortie-champ et arbitrer entre prestataires, types de véhicules (frigo/sec) et regroupements d’expéditions.", "formulas": ["CPTE (à date) = Σ (Coût facturé par expédition, en MAD) ÷ Σ (Quantité expédiée, en kg)"], "unite": "MAD/kg expédié.", "sources": ["Bons de livraison et bons de pesée (sortie exploitation)", "Factures du transporteur ou contrats forfaitaires", "Registre logistique de l’exploitation (date, destination, prestataire, tonnage, MAD)"], "freq": "Hebdomadaire en pleine campagne ; consolidation mensuelle et cumul campagne.", "owner": "Responsable logistique / chef d’exploitation (selon taille de la structure).", "actions": ["Renégocier les tarifs ou mettre en concurrence les transporteurs.", "Optimiser le taux de remplissage (regroupement d’expéditions, choix du gabarit).", "Réviser la planification des récoltes pour limiter les rotations à faible charge.", "Vérifier la conformité des facturations (kilométrage, attentes, suppléments frigo)."], "viz": "Courbe d’évolution du CPTE (hebdo/mensuel) avec ligne horizontale de la cible budgétaire ; courbe complémentaire du cumul campagne pour lisser les variations ponctuelles ; optionnel : décomposition par prestataire ou par destination (barres empilées)."}, {"num": 11, "short": "Coût drainage", "title": "Coût de l’eau de drainage perdue (système ouvert)", "family": 2, "definition": "Valorisation monétaire des intrants évacués avec les effluents non recyclés en système hydroponique ouvert : eau brute, énergie de mise en pression/conditionnement, et fertilisants dissous.", "objective": "Rendre visible le gaspillage caché du système ouvert et arbitrer la conversion vers un système fermé (recyclage) ou semi-fermé.", "formulas": ["Coût drainage perdu (DH) = V_drainé × P_eau + V_drainé × C_énergie + Masse engrais perdue × P_engrais_moyen"], "unite": "DH par cycle (ou DH/ha/cycle pour comparabilité inter-blocs).", "sources": ["Compteurs volumétriques d’apport et de drainage", "Sondes EC/pH", "Factures eau et électricité", "Registre fertirrigation, bons de livraison engrais"], "freq": "Hebdomadaire (suivi opérationnel) ; consolidation mensuelle et bilan de cycle.", "owner": "Responsable fertirrigation / chef de culture, en coordination avec le contrôleur de gestion.", "actions": ["Recalibrage des temps d’irrigation et du taux de drainage cible (viser 20–30 % en ouvert maîtrisé).", "Vérification homogénéité des goutteurs (test CU, débit, bouchages).", "Révision de la recette nutritive (EC, ratios) selon stade phénologique.", "Étude de faisabilité d’un système fermé ou de réutilisation partielle (désinfection UV, lagunage)."], "viz": "Histogramme empilé mensuel (eau / énergie / engrais) + courbe du % de drainage, avec ligne de cible interne."}, {"num": 12, "short": "MB à Date", "title": "Marge Brute à Date (MB à Date et MB/ha)", "family": 3, "definition": "Différence cumulée, depuis le début de la campagne jusqu’à la date d’arrêté, entre le chiffre d’affaires réalisé et les coûts variables engagés sur les cultures de l’exploitation. Mesure la contribution effective des cultures à la couverture des charges de structure, à un instant t de la campagne. Variante associée : MB à Date / ha, ramenant l’indicateur à l’unité de surface pour comparer parcelles, blocs ou filières.", "objective": "Piloter la rentabilité opérationnelle en cours de campagne, détecter précocement les dérives (prix, rendement, intrants) et arbitrer les décisions techniques (poursuite, intensification, arrêt) avant la clôture.", "formulas": ["MB à Date = CA réalisé à date − Coûts variables réalisés à date", "MB à Date / ha = MB à Date ÷ Surface en production (ha)"], "unite": "MB à Date : KMAD ; MB à Date / ha : KMAD/ha.", "sources": ["CA : factures de vente, bons de livraison, relevés de la station, plateforme de commercialisation", "Coûts variables : bons de sortie magasin (intrants), pointage main-d’œuvre, relevés compteurs eau/énergie, factures four", "Surface : fiche parcellaire / plan cultural"], "freq": "Mensuelle en routine ; hebdomadaire en pic de récolte ou en cas de signal d’écart. Cumul recalculé à chaque arrêté.", "owner": "Responsable d’exploitation (chef de culture / directeur technique), en binôme avec le contrôleur de gestion / responsable administratif et financier p", "actions": ["Axe prix : revoir le mix variétal/calibre, le calendrier de mise en marché, les canaux de commercialisation, renégocier les contrats.", "Axe rendement / CA volume : diagnostic agronomique (état végétatif, pression bio-agresseurs, conduite d’irrigation/fertigation), ajustement du plan de récolte.", "Axe coûts variables : audit des consommations d’intrants vs. itinéraire technique de référence, contrôle des écarts main-d’œuvre, optimisation logistique aval.", "Écart positif : vérifier la qualité de l’imputation analytique (risque de coûts non encore enregistrés), puis capitaliser les pratiques performantes."], "viz": "Courbe cumulée MB à Date réalisée vs. budgétée (axe temps en mois de campagne) ; diagramme en barres MB à Date / ha par parcelle ou filière, classé décroissant, avec ligne horizontale = cible interne ; Waterfall de décomposition de l’écart (prix / volume / coûts variables) pour la revue mensuelle."}, {"num": 13, "short": "SR", "title": "Seuil de Rentabilité prévisionnel (SR)", "family": 3, "definition": "Niveau de production (SR_kg) ou de chiffre d’affaires (SR_MAD) à atteindre pour couvrir l’ensemble des charges engagées sur le cycle. Indicateur prévisionnel, calculé avant plantation.", "objective": "Valider la faisabilité économique du cycle avant engagement ; fixer un objectif minimal de production et de CA ; servir de référence pour le suivi en cours de campagne.", "formulas": ["SR_kg = (CF_structure + CF_cycle + CV_temporels) ÷ (p̄ − CV_u,prop)", "SR_MAD = (CF_structure + CF_cycle + CV_temporels) ÷ TMCV"], "unite": "kg/ha pour SR_kg ; MAD/ha pour SR_MAD.", "sources": ["Budget prévisionnel (CF)", "Itinéraire technique (CV_temporels)", "Barèmes intrants et MO", "Historique des prix Foodex / station (3–5 campagnes) pour p̄"], "freq": "Une fois par cycle, en phase de planification. Recalcul ex-post en fin de campagne pour analyse d’écart.", "owner": "Responsable d’exploitation, appuyé par le contrôle de gestion.", "actions": ["SR > rendement attendu : revoir la conduite (densité, fertigation, conduite climatique) ou renégocier les postes de charges critiques.", "p̄ insuffisant : repositionner sur fenêtre commerciale plus rémunératrice, calibre ou marché de destination.", "Marge de sécurité (rendement_prévu − SR_kg) faible : différer ou abandonner le cycle."], "viz": "Jauge SR_prévu vs rendement-cible (bullet chart horizontal), avec marge de sécurité en zone verte et zone non rentable en rouge ; lecture statique de positionnement ex-ante."}, {"num": 14, "short": "SMC", "title": "Suivi de Marge Cumulée (SMC)", "family": 3, "definition": "Marge cumulée quotidienne du cycle. Solde cumulé (Recettes − Charges) au jour t, avec les charges fixes intégralement engagées dès J0. Indicateur de pilotage temps-réel du cycle.", "objective": "Suivre la trésorerie de campagne au jour le jour ; dimensionner le BFR ; détecter précocement les dérives technico-économiques ; anticiper la date de franchissement du SR.", "formulas": ["M(t) = Σⱼ≤ₜ (qⱼ × pⱼ) − [CF_total + Σⱼ≤ₜ CV_temp,j + Σⱼ≤ₜ qⱼ × CV_u,prop]"], "unite": "MAD/ha cumulés pour M(t) et M_min ; jours pour t_SR et t_min ; MAD/jour/ha pour la pente post-SR.", "sources": ["Chronique de production quotidienne (kg/jour/bloc)", "Bordereaux de vente station", "Factures intrants horodatées", "Pointages main-d’œuvre"], "freq": "Quotidienne, ou hebdomadaire selon la granularité du système d’information de l’exploitation.", "owner": "Responsable d’exploitation pour le pilotage ; technicien de bloc pour la saisie quotidienne.", "actions": ["M_min plus profond que la trajectoire budgétée : audit des CV_temporels (eau, MO, phyto), ajustement des postes en dérive.", "t_SR retardé : vérifier précocité, rendement réalisé et prix obtenu ; recaler le plan de récolte.", "Pente post-SR faible : arbitrer prolongation vs arrêt anticipé du cycle.", "M(t) durablement sous la bande de tolérance : alerter la direction, activer la ligne de crédit campagne si besoin."], "viz": "Courbe en J de M(t) : axe X = jours du cycle, axe Y = MAD/ha cumulés, ligne zéro pointillée, trajectoire budgétée avec bande de tolérance, marqueurs t_SR et M_min, annotation de la pente post-SR. Superposition de la courbe réalisée sur la courbe budgétée en cours de campagne."}, {"num": 15, "short": "Prod. MO", "title": "Productivité Économique de la Main-d’Œuvre", "family": 4, "definition": "Chiffre d’affaires généré par journée de travail mobilisée sur l’exploitation (toutes catégories de main-d’œuvre confondues : permanente, saisonnière, occasionnelle).", "objective": "Évaluer l’efficience économique du facteur travail et orienter les arbitrages d’allocation de MO entre cultures, parcelles ou opérations culturales.", "formulas": ["Productivité économique MO = Chiffre d’affaires (MAD) ÷ Cumul des journées de travail (JH)"], "unite": "MAD / JH (dirham par journée-homme).", "sources": ["CA : journal des ventes, factures, registre comptable", "Journées de travail : pointage MO, fiches de chantier, registre de paie, contrats saisonniers"], "freq": "Mensuelle (suivi opérationnel) et par campagne / par culture (analyse de clôture).", "owner": "Chef d’exploitation, appuyé par le responsable RH/MO et le contrôleur de gestion.", "actions": ["Auditer les postes les plus consommateurs de MO (récolte, taille, désherbage) et identifier les gisements de productivité.", "Vérifier l’adéquation effectif/charge de travail (sureffectif, mauvaise planification des chantiers).", "Réviser les normes de rendement par opération (cadences, primes au rendement).", "Évaluer l’intérêt d’une mécanisation partielle ou d’outils d’aide (chariots, sécateurs pneumatiques).", "Contrôler la qualité du pricing et le mix produit (impact sur le CA)."], "viz": "Courbe mensuelle (réel vs. cible), complétée d’un histogramme comparatif par culture ou par parcelle en fin de campagne."}, {"num": 16, "short": "MB/JH", "title": "Marge Brute par Jour de Main-d’Œuvre (Marge/JH)", "family": 4, "definition": "Indicateur de productivité économique du travail : il rapporte la marge brute dégagée à la quantité de main-d’œuvre mobilisée, exprimée en jours-hommes (JH).", "objective": "Optimiser la valorisation économique du facteur travail et arbitrer entre intensité de main-d’œuvre, mécanisation et choix d’itinéraire technique.", "formulas": ["Marge brute par JH = Marge brute ÷ Nombre de jours-hommes travaillés"], "unite": "MAD/JH", "sources": ["Numérateur : compte d’exploitation analytique de la parcelle/culture (marge brute = produit brut − charges opérationnell", "Dénominateur : registres de pointage MO, fiches de chantier, état de paie (MO permanente + saisonnière + tâcheronnat con"], "freq": "Maraîchage & fruits rouges : par cycle de culture, avec point intermédiaire mensuel. Arboriculture fruitière : par campagne annuelle, avec suivi par p", "owner": "Responsable d’exploitation, en lien avec le chef de culture (suivi terrain) et le responsable administratif/RH (consolidation des JH).", "actions": ["Écart défavorable lié au dénominateur (sur-consommation MO) : analyse des postes les plus consommateurs, réorganisation des chantiers, ajustement du ratio MO permanente/saisonnière, mécanisation ciblé", "Écart défavorable lié au numérateur (marge insuffisante) : revoir le mix variétal, le calendrier de mise en marché, la maîtrise des charges opérationnelles, la qualité commerciale.", "Écart favorable : documenter les bonnes pratiques pour transposition aux autres parcelles/cycles."], "viz": "Graphique en barres comparant Marge/JH réalisé vs cible par parcelle, cycle ou filière ; complété d’une courbe d’évolution pluriannuelle pour l’arboriculture."}, {"num": 17, "short": "CA/m³ eau", "title": "Chiffre d’Affaires par m³ d’Eau Consommé", "family": 4, "definition": "Productivité économique de l’eau. Mesure la valeur commerciale générée par unité de volume d’eau mobilisée (apport brut, drainage inclus).", "objective": "Piloter l’efficience économique de la ressource hydrique, ressource critique au Maroc, et orienter le mix variétal/cultural vers les productions à plus forte valeur ajoutée hydrique.", "formulas": ["CA/m³ eau = Chiffre d’affaires de la culture (DH) ÷ Volume total d’eau consommé (m³)"], "unite": "DH/m³.", "sources": ["Compteurs d’irrigation parcellaires", "Factures de vente / bons de sortie station", "Comptabilité analytique par bloc"], "freq": "Mensuelle pendant le cycle ; bilan en fin de cycle / fin de campagne.", "owner": "Contrôleur de gestion, en lien avec le chef de culture et le responsable irrigation.", "actions": ["Si CA/m³ < cible : analyser si l’écart provient du dénominateur (sur-irrigation, pertes) ou du numérateur (prix de vente, rendement, calibre, taux de rebut).", "Audit irrigation : taux de drainage, uniformité, programmation.", "Repositionnement commercial : segmentation calibres, fenêtres de marché export, valorisation bio.", "Arbitrage variétal pour les prochains cycles selon CA/m³ historique par variété."], "viz": "Courbe mensuelle CA/m³ vs cible interne, complétée d’un graphique en barres comparant les blocs/variétés sur la campagne."}, {"num": 18, "short": "DSO", "title": "Délai Moyen de Paiement Clients en Temps Réel (DSO)", "family": 5, "definition": "Indicateur dynamique mesurant le nombre moyen de jours nécessaires pour encaisser les créances clients, calculé à date depuis le début de l’exercice (ou de la campagne) plutôt qu’en fin de période. Permet un pilotage continu de la trésorerie sans attendre la clôture.", "objective": "Sécuriser la trésorerie d’exploitation, réduire le besoin en fonds de roulement (BFR) et anticiper les tensions de liquidité, notamment en période de forte mobilisation financière (intrants, récolte, conditionnement).", "formulas": ["DSO temps réel = (Créances clients à date × Nombre de jours écoulés depuis le début de la période) ÷ Chiffre d’affaires cumulé sur la période"], "unite": "Jours", "sources": ["Balance clients / grand livre auxiliaire (créances ouvertes à date)", "Journal des ventes / facturation (CA cumulé HT)", "Logiciel comptable ou ERP de l’exploitation"], "freq": "Hebdomadaire ou mensuelle (en continu, recalculée à chaque date d’observation).", "owner": "Responsable administratif et financier ; à défaut, le gérant de l’exploitation en lien avec le service comptable.", "actions": ["Relances clients structurées (J+0, J+15, J+30 après échéance).", "Revue des conditions contractuelles avec les clients en retard chronique.", "Mise en place d’escomptes pour paiement anticipé.", "Sélection ou réorientation commerciale vers des canaux à meilleure rotation (export sécurisé, contrats avec acomptes).", "Recours à l’affacturage ou à la mobilisation de créances en cas de tension prolongée."], "viz": "Courbe d’évolution du DSO en jours sur l’axe temporel (hebdomadaire), avec ligne horizontale matérialisant la cible interne. Possibilité de superposer une seconde courbe représentant le solde des créances échues pour lecture croisée."}, {"num": 19, "short": "DPO", "title": "Délai de Paiement Fournisseurs en Temps Réel (DPO)", "family": 5, "definition": "DPO temps réel — Délai moyen de paiement des fournisseurs, mesuré en continu à partir du registre des lettres de change (traites) émises depuis le début de l’exercice.", "objective": "Piloter la trésorerie de l’exploitation en suivant la durée effective du crédit fournisseur, optimiser le BFR et anticiper les échéances de traites.", "formulas": ["DPO = (Dettes fournisseurs × Nombre de jours écoulés depuis le début de l’exercice) ÷ Achats cumulés depuis le début de l’exercice"], "unite": "Jours", "sources": ["Registre des lettres de change (traites) : date d’émission, date d’échéance, fournisseur, motif, montant, statut", "Journal des achats / comptabilité fournisseurs", "Balance auxiliaire fournisseurs"], "freq": "Temps réel (mise à jour à chaque émission ou règlement de traite) ; consolidation hebdomadaire et mensuelle.", "owner": "Responsable administratif et financier de l’exploitation (ou chef d’exploitation pour les structures de petite taille).", "actions": ["DPO > cible : risque de tension fournisseurs → renégocier échéances, prioriser règlements stratégiques (intrants critiques en saison), vérifier disponibilité de trésorerie.", "DPO < cible : crédit fournisseur sous-exploité → renégocier délais à l’amont, mobiliser ressources pour autofinancement du cycle cultural.", "Identifier les fournisseurs concentrant l’écart (analyse Pareto)."], "viz": "Courbe d’évolution du DPO (jour par jour) avec ligne horizontale de cible interne ; histogramme des encours de traites par fournisseur ; gauge temps réel sur tableau de bord."}, {"num": 20, "short": "TCS", "title": "Taux de Couverture de Stock (TCS)", "family": 5, "definition": "Durée pendant laquelle le stock disponible d’un intrant donné permet de couvrir la consommation courante de l’exploitation, sans réapprovisionnement.", "objective": "Sécuriser la continuité des opérations culturales (fertilisation, protection phytosanitaire, conditionnement) en évitant à la fois les ruptures de stock — qui désorganisent les itinéraires techniques — et le surstockage, source d’immobilisation de trésorerie et de pertes (péremption, dégradation).", "formulas": ["TCS = Stock disponible ÷ Consommation moyenne sur la période de référence"], "unite": "Jours, semaines ou mois — choisie par catégorie d’intrant selon sa rotation.", "sources": ["Fiches de stock magasin (entrées/sorties)", "Bons de sortie atelier/parcelles", "Historique des consommations (ERP, tableur de gestion, registre manuel)", "Plan de fertilisation et programme phytosanitaire prévisionnels"], "freq": "Intrants critiques en pleine campagne : hebdomadaire. Emballages pendant récolte : hebdomadaire. Autres intrants (pièces, hors saison) : mensuelle.", "owner": "Responsable approvisionnement / magasinier, sous supervision du chef de culture pour les intrants techniques et du responsable conditionnement pour le", "actions": ["TCS < cible interne (sous-couverture) : déclencher la commande de réapprovisionnement, vérifier le délai fournisseur, arbitrer un dépannage local si urgence, identifier la cause (sous-estimation de la", "TCS > cible interne (sur-couverture) : suspendre les commandes en cours, réviser les paramètres de réapprovisionnement (stock de sécurité, lot minimum), contrôler les dates de péremption, redéployer l"], "viz": "Tableau de bord magasin avec code couleur par catégorie d’intrant (vert : couverture nominale ; orange : sous-couverture ; rouge : rupture imminente / sur-couverture critique) ; courbe d’évolution du TCS pour les intrants stratégiques."}, {"num": 21, "short": "Coût pertes", "title": "Coût des Pertes Post-Récolte", "family": 6, "definition": "Valorisation, au coût de revient, des quantités produites mais non commercialisées (rebuts de tri, pertes en station, pertes en chambre froide, casse logistique interne).", "objective": "Préserver la marge brute en maîtrisant la part du coût de production perdue avant commercialisation.", "formulas": ["Coût des Pertes = Quantité perdue (kg) × Coût de revient unitaire (MAD/kg)"], "unite": "KMAD (en valeur absolue) ; complémentairement % du coût de production total.", "sources": ["Fiches de tri station", "Registres de récolte", "Comptabilité analytique (pour le coût de revient unitaire)"], "freq": "Mensuelle en campagne, consolidation en fin de campagne.", "owner": "Responsable station de conditionnement / Chef de culture, en lien avec le contrôleur de gestion.", "actions": ["Décomposition des pertes par poste (récolte, transport interne, calibrage, conservation).", "Audit de la chaîne du froid et des conditions de manutention.", "Révision du stade et des créneaux de récolte.", "Formation des opérateurs de tri et de récolte."], "viz": "Histogramme empilé mensuel par cause de perte, avec ligne de cible interne."}, {"num": 22, "short": "Manque à gagner", "title": "Manque à Gagner sur Pertes", "family": 6, "definition": "Valorisation, au prix de marché, du chiffre d’affaires non réalisé du fait (i) des pertes physiques totales et (ii) des déclassements commerciaux (écarts vendus à un prix inférieur au prix de référence).", "objective": "Quantifier l’impact commercial des pertes pour prioriser les leviers d’amélioration (technique vs. commercial).", "formulas": ["Situation 1 — Pertes physiques : MAG₁ = Quantité perdue (kg) × Prix moyen de vente (MAD/kg)", "Situation 2 — Déclassements : MAG₂ = Quantité d’écarts (kg) × (Prix de référence − Prix réellement perçu) (MAD/kg)", "Manque à Gagner total = MAG₁ + MAG₂"], "unite": "KMAD.", "sources": ["Fiches de tri station (kg perdus et déclassés)", "Factures de vente (prix réel perçu)", "Mercuriales / contrats commerciaux (prix de référence ou prix moyen)"], "freq": "Mensuelle, consolidation en fin de campagne.", "owner": "Responsable commercial, en lien avec le responsable station et le contrôleur de gestion.", "actions": ["Analyse des causes de déclassement (calibre, défauts de peau, maturité, conservation).", "Ajustement des itinéraires techniques (fertilisation, irrigation, protection sanitaire).", "Diversification des débouchés / renégociation des contrats.", "Amélioration du conditionnement et de la logistique frigorifique."], "viz": "Diagramme en cascade (waterfall) : CA potentiel → MAG₁ → MAG₂ → CA réalisé."}, {"num": 23, "short": "EBE", "title": "Excédent Brut d’Exploitation (EBE)", "family": 3, "definition": "Solde généré par l’activité courante de l’exploitation après rémunération des facteurs travail et fiscalité d’exploitation, indépendamment de la politique d’amortissement, de financement et des éléments exceptionnels. Mesure la performance opérationnelle pure de l’exploitation horticole.", "objective": "Évaluer la capacité de l’exploitation à dégager une trésorerie d’exploitation suffisante pour couvrir les amortissements, le service de la dette et financer le développement (renouvellement du verger, extension de serres, plantations de fruits rouges).", "formulas": ["EBE = Valeur ajoutée − Charges de personnel − Impôts et taxes d’exploitation"], "unite": "Dirhams (MAD). Indicateurs dérivés possibles : MAD/ha, MAD/serre, MAD/tonne produite, ou taux d’EBE ", "sources": ["Comptabilité analytique de l’exploitation", "Livre de paie", "Déclarations fiscales (patente, taxes locales)", "Fiches de production par parcelle/bloc"], "freq": "Annuelle (clôture d’exercice) ; suivi semestriel recommandé pour les exploitations à cycles courts (maraîchage sous serre, fruits rouges).", "owner": "Directeur d’exploitation, appuyé par le responsable administratif et financier.", "actions": ["Décomposer l’écart : effet prix, effet volume, effet charges.", "Audit des consommations intermédiaires (intrants, eau, énergie) sur les postes les plus déviants.", "Revue de la productivité du travail (heures/ha, coût main-d’œuvre par tonne).", "Renégociation des contrats fournisseurs et révision du plan de fertirrigation."], "viz": "Histogramme EBE réalisé vs. budgété par campagne, complété d’un waterfall chart décomposant l’écart (valeur ajoutée, personnel, impôts/taxes)."}, {"num": 24, "short": "Marge nette", "title": "Taux de Marge Nette", "family": 3, "definition": "Part du chiffre d’affaires qui se transforme en résultat net après prise en compte de l’ensemble des charges (exploitation, financières, exceptionnelles, impôts). Indicateur de rentabilité finale de l’exploitation.", "objective": "Mesurer la rentabilité globale du modèle économique de l’exploitation et sa capacité à rémunérer les capitaux propres après couverture de toutes les charges.", "formulas": ["Taux de marge nette (%) = (Résultat net ÷ Chiffre d’affaires) × 100"], "unite": "Pourcentage (%).", "sources": ["Compte de produits et charges (CPC)", "États de synthèse de fin d’exercice", "Comptabilité générale"], "freq": "Annuelle, à la clôture de l’exercice comptable.", "owner": "Responsable administratif et financier, sous validation du directeur d’exploitation.", "actions": ["Analyse en cascade : marge brute → EBE → résultat d’exploitation → résultat net, pour localiser le niveau d’érosion.", "Si écart d’origine opérationnelle : renvoi à l’analyse EBE.", "Si écart d’origine financière : revue de la structure d’endettement et du coût moyen de la dette.", "Si écart d’origine exceptionnelle : isoler et documenter pour neutraliser l’analyse de tendance."], "viz": "Courbe de tendance pluriannuelle (3 à 5 campagnes) avec ligne de cible interne ; combinée à un tableau en cascade du CA jusqu’au résultat net."}, {"num": 25, "short": "ROI", "title": "ROI Exploitation (Return on Investment)", "family": 3, "definition": "Rentabilité économique des capitaux engagés dans l’outil de production (plantations, serres, équipements d’irrigation, station de conditionnement). Indicateur clé pour arbitrer les décisions d’investissement (extension de serres, renouvellement variétal, conversion bio).", "objective": "Évaluer la création de valeur par unité de capital investi et orienter les choix d’allocation du capital entre filières (maraîchage, arboriculture, fruits rouges) et entre projets (extension, renouvellement, diversification).", "formulas": ["ROI exploitation (%) = (Résultat net ÷ Capitaux investis) × 100"], "unite": "Pourcentage (%).", "sources": ["Bilan comptable (actif immobilisé, BFR)", "Inventaire des immobilisations par filière/parcelle", "Plan d’investissement"], "freq": "Annuelle ; calcul prévisionnel obligatoire avant toute décision d’investissement significatif.", "owner": "Direction générale / propriétaire, appuyée par le responsable administratif et financier.", "actions": ["Décomposition Du Pont : ROI = Marge nette × Rotation des capitaux (CA ÷ Capitaux investis), pour identifier le levier prioritaire.", "Revue du portefeuille d’actifs : identifier les blocs/parcelles sous-performants (vieillissement du verger, serres obsolètes).", "Réexamen du phasage des investissements en cours.", "Arbitrage entre rénovation, cession ou reconversion des actifs sous-rentables."], "viz": "Diagramme à barres comparant le ROI par filière et par bloc d’investissement ; complété par un graphique de décomposition Du Pont (marge × rotation)."}, {"num": 26, "short": "Crt", "title": "Coût de revient de la récolte (Crt)", "family": 7, "definition": "Le coût de revient de la récolte (Crt) mesure le coût main-d’œuvre par kilogramme récolté. Il rapporte le coût journalier total de la main-d’œuvre mobilisée sur l’opération de récolte (ouvrier individuel ou équipe) à la quantité totale effectivement récoltée sur la même journée. Le périmètre est strictement limité à l’opération de récolte. Le coût journalier intègre le salaire brut, les charges sociales (CNSS, AMO), les primes éventuelles et le coût de transport, et non le seul salaire net.", "objective": "Maîtriser le coût main-d’œuvre par unité de production récoltée et identifier les équipes, parcelles ou périodes à coût unitaire dégradé.", "formulas": ["Crt = Coût journalier total de la main-d’œuvre de récolte ÷ Quantité totale récoltée (kg)"], "unite": "MAD/kg.", "sources": ["Fiche de pointage journalière de l’équipe de récolte", "Bordereau de paie (salaires, charges, primes, transport)", "Registre de récolte : pesée champ ou réception station"], "freq": "Quotidienne sur les jours de récolte ; consolidation hebdomadaire et bilan de campagne.", "owner": "Chef de culture pour la collecte et le calcul ; Responsable d’exploitation pour la validation.", "actions": ["Réviser la composition de l’équipe (ratio encadrement / ouvriers, expérience).", "Ajuster le cadencement et l’organisation des rangs.", "Adapter les contenants de récolte (profondeur, ergonomie).", "Former à la gestuelle et au repérage en frondaison.", "Contrôler les temps morts : déplacements, vidange, attentes."], "viz": "Courbe d’évolution quotidienne du Crt (MAD/kg) avec ligne de cible interne ; barres comparatives par équipe et par parcelle."}, {"num": 27, "short": "Cq", "title": "Coût de la non-qualité à la récolte (Cq)", "family": 7, "definition": "Le coût de la non-qualité (Cq) mesure le manque à gagner sur les fruits récoltés mais déclassés ou éliminés du fait d’une manipulation défectueuse à la cueillette (chocs, écrasement, point de coupe inadapté, mauvaise dépose en contenant). Cq isole l’impact économique de la qualité gestuelle de l’opérateur de récolte. Il ne couvre pas les défauts de qualité d’origine agronomique (maladies, calibre insuffisant) qui relèvent d’autres KPI.", "objective": "Préserver la valeur commerciale de la production récoltée ; piloter la qualité gestuelle des opérateurs et l’organisation de la chaîne champ–station.", "formulas": ["Cq = Quantité endommagée (kg) × (Prix de vente Premium − Prix de vente Déclassé)", "Cas des fruits totalement éliminés : Cq = Quantité éliminée (kg) × Prix de vente Premium"], "unite": "MAD/jour, MAD/équipe, MAD/campagne.", "sources": ["Tri station : contrôle qualité à la réception, ventilation Premium / Déclassé / Éliminé", "Contrôle qualité champ par échantillonnage (contrôleur récolte)", "Mercuriales ou contrats commerciaux pour les prix de référence Premium et Déclassé"], "freq": "Quotidienne sur les jours de récolte ; consolidation par équipe et par campagne.", "owner": "Responsable qualité ou Chef de station ; chef d’équipe récolte en relais terrain.", "actions": ["Formation des ouvriers à la cueillette : point de coupe, manipulation, dépose en contenant.", "Audit des contenants : rembourrage, profondeur, propreté, capacité.", "Revue de la cadence imposée si elle pousse à la précipitation.", "Contrôle des conditions de transport champ–station (vibrations, température, durée).", "Mise en place d’une boucle de retour quotidienne entre station et équipes de récolte."], "viz": "Histogramme empilé par équipe (Premium / Déclassé / Éliminé en kg ou en MAD) ; diagramme de Pareto des causes de déclassement."}, {"num": 28, "short": "Cp", "title": "Coût d’opportunité des pertes à la récolte (Cp)", "family": 7, "definition": "Le coût d’opportunité des pertes à la récolte (Cp) valorise les fruits sains non récoltés : fruits oubliés sur la plante au passage de l’équipe, ou tombés au sol et non ramassés. C’est un manque à gagner qui ne se traduit dans aucune comptabilité analytique standard mais représente une perte économique réelle. Le prix de référence retenu est le prix Premium, car les fruits concernés étaient sains et destinés au meilleur débouché s’ils avaient été correctement récoltés.", "objective": "Maximiser le taux de récupération de la production présente sur la parcelle ; piloter la qualité de la couverture des rangs et le séquençage des passages.", "formulas": ["Cp = Quantité perdue au champ (kg) × Prix de vente Premium"], "unite": "MAD/jour, MAD/équipe, MAD/passage de récolte.", "sources": ["Comptage post-récolte sur placettes témoins (fruits oubliés + chutes au sol)", "Pesée des chutes ramassées en glanage", "Audit de second passage par le contrôleur récolte"], "freq": "Par passage de récolte, sur échantillon ; consolidation hebdomadaire et par campagne.", "owner": "Chef de culture ; contrôleur récolte sur le terrain.", "actions": ["Revoir le séquençage des passages au regard de la cinétique de maturité.", "Densifier les passages en période de pic de production.", "Former au repérage en frondaison haute et basse (zones d’oubli typiques).", "Instaurer un passage de glanage systématique en fin de cycle.", "Évaluer si la cadence imposée pousse les ouvriers à survoler les rangs."], "viz": "Courbe d’évolution du Cp par passage de récolte ; carte de chaleur par parcelle pour cibler les zones d’oubli récurrentes."}, {"num": 29, "short": "VNGO", "title": "Valeur Nette Générée par l’Ouvrier à la récolte (VNGO)", "family": 7, "definition": "La Valeur Nette Générée par l’Ouvrier (VNGO) mesure la valeur économique effectivement créée par une équipe de récolte (ou un ouvrier en cas de rémunération à la tâche) sur une journée de travail, après imputation du coût main-d’œuvre, du coût de la non-qualité (Cq) et du coût d’opportunité des pertes au champ (Cp). La VNGO offre une lecture économique synthétique de la performance de l’équipe, allant au-delà de la seule productivité physique (kg/JH). Une équipe rapide mais qui endommage beaucou", "objective": "Évaluer la contribution économique nette de la main-d’œuvre de récolte ; arbitrer entre productivité brute, qualité gestuelle et exhaustivité de la cueillette.", "formulas": ["VNGO = CA récolte − (Coût journalier MO + Cq + Cp)", "CA récolte = Quantité commercialisable récoltée × Prix de vente moyen pondéré (Premium et Déclassé selon répartition réelle)"], "unite": "MAD/jour/équipe (ou MAD/jour/ouvrier le cas échéant).", "sources": ["Bordereau de récolte (quantités récoltées commercialisables)", "Fiche de paie et coût journalier complet de l’équipe", "Tri station (ventilation Premium / Déclassé / Éliminé pour Cq)", "Comptage des pertes au champ (pour Cp)", "Mercuriales et factures de vente pour les prix"], "freq": "Quotidienne sur les jours de récolte ; consolidation hebdomadaire et bilan de campagne.", "owner": "Responsable d’exploitation ; Chef de culture pour la collecte des données primaires.", "actions": ["VNGO faible ou négative : décomposer la perte de valeur entre Cq, Cp et sous-productivité ; agir sur le poste dominant.", "Revoir la composition de l’équipe (mix permanents/saisonniers, encadrement).", "Arbitrer entre cadence et qualité gestuelle si Cq est élevé.", "Renforcer l’organisation des passages si Cp est élevé.", "Mettre en place une prime à la qualité indexée sur la VNGO de l’équipe."], "viz": "Diagramme en cascade (waterfall) quotidien par équipe : CA brut → −Coût MO → −Cq → −Cp → VNGO. Tableau de bord journalier par équipe."}, {"num": 30, "short": "IEEGO", "title": "Indice d’Efficience Économique Globale à la récolte (IEEGO)", "family": 7, "definition": "L’Indice d’Efficience Économique Globale de l’Ouvrier (IEEGO) mesure le rapport entre la valeur nette effectivement générée (VNGO) et la valeur nette maximale théoriquement atteignable (VPGO) en cas de récolte parfaite : aucune perte au champ, aucun endommagement, totalité de la production écoulée au prix Premium. L’IEEGO exprime, en pourcentage, la distance à l’optimum économique de la récolte. Sa décomposition permet de hiérarchiser les leviers d’amélioration (qualité gestuelle via Cq, exhaust", "objective": "Mesurer la distance à l’optimum économique de la récolte ; prioriser les actions correctives entre amélioration de la qualité gestuelle et amélioration du taux de récupération.", "formulas": ["IEEGO = (VNGO ÷ VPGO) × 100", "VPGO = (Quantité totale présente sur la parcelle × Prix Premium) − Coût journalier MO", "Quantité totale présente = Quantité récoltée commercialisable + Quantité endommagée + Quantité perdue au champ"], "unite": "Pourcentage (%).", "sources": ["Toutes les sources de la VNGO (bordereau récolte, paie, tri station, comptage pertes)", "Estimation de la production présente sur la parcelle par échantillonnage parcellaire", "Prix Premium issu des mercuriales ou des factures de vente"], "freq": "Hebdomadaire — l’estimation fiable de la VPGO requiert un protocole d’échantillonnage soigné et un pas suffisant pour lisser les variations quotidienn", "owner": "Responsable d’exploitation.", "actions": ["Décomposer l’écart (1 − IEEGO) en part Cq et part Cp ; cibler le poste majeur en priorité.", "Si Cq dominant : agir sur la formation gestuelle, les contenants, la cadence.", "Si Cp dominant : agir sur le séquençage des passages, la couverture des rangs, le glanage.", "Si VPGO incertaine : fiabiliser le protocole d’échantillonnage avant d’interpréter l’IEEGO.", "Suivre la tendance campagne par campagne plutôt que la valeur absolue, qui dépend de la définition retenue pour VPGO."], "viz": "Jauge (gauge) d’IEEGO par équipe ; courbe de tendance par campagne ; barres empilées décomposant l’écart à 100 % en part Cq et part Cp."}];
+const FAMILIES = {"1": {"name": "Chiffre d'affaires & valorisation commerciale", "short": "Chiffre d'affaires", "icon": "TRA", "color": "blue", "hex": "#1E3A8A", "bg": "#EFF6FF", "soft": "#DBEAFE"}, "2": {"name": "Coûts & structure", "short": "Coûts", "icon": "CST", "color": "orange", "hex": "#9A3412", "bg": "#FFF7ED", "soft": "#FFEDD5"}, "3": {"name": "Marge & rentabilité", "short": "Marge", "icon": "MAR", "color": "green", "hex": "#065F46", "bg": "#ECFDF5", "soft": "#D1FAE5"}, "4": {"name": "Productivité des facteurs", "short": "Productivité", "icon": "PRO", "color": "purple", "hex": "#5B21B6", "bg": "#F5F3FF", "soft": "#EDE9FE"}, "5": {"name": "Trésorerie & flux", "short": "Trésorerie", "icon": "TRE", "color": "teal", "hex": "#155E75", "bg": "#ECFEFF", "soft": "#CFFAFE"}, "6": {"name": "Pertes & écarts", "short": "Pertes", "icon": "PER", "color": "red", "hex": "#991B1B", "bg": "#FEF2F2", "soft": "#FEE2E2"}, "7": {"name": "Main-d'œuvre — Récolte", "short": "Récolte", "icon": "REC", "color": "amber", "hex": "#854D0E", "bg": "#FEFCE8", "soft": "#FEF3C7"}};
+
+/* --- Stat counter animation --- */
+function animateCount() {
+  document.querySelectorAll('.stat-value[data-count]').forEach(el => {
+    const target = +el.dataset.count;
+    const dur = 900;
+    const start = performance.now();
+    function step(t) {
+      const p = Math.min((t - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+/* --- Build families grid --- */
+function renderFamilies() {
+  const grid = document.getElementById('familiesGrid');
+  const pills = document.getElementById('filterPills');
+  Object.entries(FAMILIES).forEach(([id, f]) => {
+    const count = KPIS.filter(k => k.family == id).length;
+
+    // Family card
+    const card = document.createElement('button');
+    card.className = 'fam-card';
+    card.dataset.fam = id;
+    card.style.cssText = `--fc:${f.hex};--fc-bg:${f.bg};--fc-soft:${f.soft}`;
+    card.innerHTML = `
+      <div class="fam-top">
+        <span class="fam-num">F${id} · ${f.icon}</span>
+        <span class="fam-count">${count}<small>kpi</small></span>
+      </div>
+      <div class="fam-name">${f.name}</div>
+    `;
+    card.addEventListener('click', () => filterBy(id));
+    grid.appendChild(card);
+
+    // Filter pill
+    const pill = document.createElement('button');
+    pill.className = 'pill';
+    pill.dataset.fam = id;
+    pill.style.cssText = `--fc:${f.hex}`;
+    pill.textContent = `F${id} · ${f.short} (${count})`;
+    pill.addEventListener('click', () => filterBy(id));
+    pills.appendChild(pill);
+  });
+  document.querySelector('.pill[data-fam="0"]').addEventListener('click', () => filterBy(0));
+}
+
+/* --- KPI card renderer --- */
+function renderKPICards(filterFam, search) {
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = '';
+  const q = (search || '').trim().toLowerCase();
+  let filtered = KPIS;
+  if (filterFam && filterFam != 0) filtered = filtered.filter(k => k.family == filterFam);
+  if (q) {
+    filtered = filtered.filter(k =>
+      (k.title + ' ' + k.short + ' ' + (k.definition||'') + ' ' + (k.formulas||[]).join(' ')).toLowerCase().includes(q)
+    );
+  }
+
+  document.getElementById('countInfo').textContent =
+    filtered.length === 30 ? '30 indicateurs affichés' :
+    filtered.length === 0 ? 'Aucun indicateur ne correspond' :
+    `${filtered.length} indicateur${filtered.length>1?'s':''} affiché${filtered.length>1?'s':''}`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty"><h3>Aucun résultat</h3><p>Essayez une autre recherche ou réinitialisez les filtres.</p></div>';
+    return;
+  }
+
+  filtered.forEach((k, i) => {
+    const f = FAMILIES[k.family];
+    const card = document.createElement('button');
+    card.className = 'kpi-card';
+    card.style.cssText = `--fc:${f.hex};--fc-bg:${f.bg};--fc-soft:${f.soft};animation-delay:${Math.min(i*0.03,0.4)}s`;
+    const formula = (k.formulas && k.formulas[0]) ? k.formulas[0] : 'Voir détails';
+    card.innerHTML = `
+      <div class="kpi-top">
+        <span class="kpi-num">KPI n°${k.num}</span>
+        <span class="kpi-fam-label">F${k.family} · ${f.short}</span>
+      </div>
+      <div>
+        <h3 class="kpi-short">${escapeHtml(k.short)}</h3>
+        <p class="kpi-title">${escapeHtml(k.title)}</p>
+      </div>
+      <div class="kpi-formula">${escapeHtml(formula)}</div>
+      <div class="kpi-bottom">
+        <span class="kpi-tag unit">${escapeHtml(k.unite || '—')}</span>
+        <span class="kpi-tag">${escapeHtml((k.freq||'').split(';')[0].split('.')[0].trim() || 'Périodique')}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(k));
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* --- Filter logic --- */
+let currentFam = 0;
+function filterBy(fam) {
+  currentFam = fam;
+  document.querySelectorAll('.fam-card').forEach(c => c.classList.toggle('active', c.dataset.fam == fam));
+  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.fam == fam));
+  renderKPICards(fam, document.getElementById('searchInput').value);
+  if (fam != 0) {
+    document.getElementById('catalogue').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  renderKPICards(currentFam, e.target.value);
+});
+
+/* --- Modal --- */
+function openModal(k) {
+  const f = FAMILIES[k.family];
+  const m = document.getElementById('modalContent');
+  m.style.cssText = `--fc:${f.hex};--fc-bg:${f.bg};--fc-soft:${f.soft}`;
+
+  const formulasHtml = (k.formulas && k.formulas.length)
+    ? k.formulas.map(fo => `<div class="modal-formula">${escapeHtml(fo)}</div>`).join('')
+    : '<div class="modal-formula">Voir la fiche source pour la formule détaillée.</div>';
+
+  const sourcesHtml = (k.sources && k.sources.length)
+    ? `<ul class="modal-list">${k.sources.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>`
+    : '<p>Sources détaillées dans la fiche.</p>';
+
+  const actionsHtml = (k.actions && k.actions.length)
+    ? `<ul class="modal-list">${k.actions.map(a => `<li>${escapeHtml(a)}</li>`).join('')}</ul>`
+    : '';
+
+  m.innerHTML = `
+    <div class="modal-head">
+      <span class="kpi-num">KPI n°${k.num}</span>
+      <h2>${escapeHtml(k.title)}</h2>
+      <span class="modal-fam-name">Famille ${k.family} — ${escapeHtml(f.name)}</span>
+      <button class="modal-close" onclick="closeModal()" aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <h3>Définition</h3>
+      <p>${escapeHtml(k.definition || 'Voir le document source.')}</p>
+
+      ${k.objective ? `<h3>Objectif stratégique</h3><p>${escapeHtml(k.objective)}</p>` : ''}
+
+      <h3>Formule de calcul</h3>
+      <div class="modal-formulas">${formulasHtml}</div>
+
+      <h3>Caractéristiques</h3>
+      <div class="modal-meta-grid">
+        <div class="modal-meta">
+          <div class="modal-meta-label">Unité</div>
+          <div class="modal-meta-value">${escapeHtml(k.unite || '—')}</div>
+        </div>
+        <div class="modal-meta">
+          <div class="modal-meta-label">Fréquence</div>
+          <div class="modal-meta-value">${escapeHtml(k.freq || '—')}</div>
+        </div>
+        <div class="modal-meta">
+          <div class="modal-meta-label">Responsable (Owner)</div>
+          <div class="modal-meta-value">${escapeHtml(k.owner || '—')}</div>
+        </div>
+        <div class="modal-meta">
+          <div class="modal-meta-label">Cible</div>
+          <div class="modal-meta-value">Définie par l'exploitation (budget prévisionnel + stratégie)</div>
+        </div>
+      </div>
+
+      <h3>Sources des données</h3>
+      ${sourcesHtml}
+
+      ${actionsHtml ? `<h3>Plan d'action en cas d'écart</h3>${actionsHtml}` : ''}
+
+      ${k.viz ? `<h3>Visualisation</h3><div class="viz-box">${escapeHtml(k.viz)}</div>` : ''}
+    </div>
+  `;
+
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* --- Charts (Chart.js) --- */
+function buildCharts() {
+  Chart.defaults.font.family = "'IBM Plex Sans', system-ui, sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = '#6E6A60';
+  Chart.defaults.borderColor = '#E8E3D6';
+
+  const commonOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true, padding: 14 } },
+      tooltip: {
+        backgroundColor: 'rgba(26,24,21,0.94)', padding: 10, cornerRadius: 6,
+        titleFont: {size: 12, weight: '600'}, bodyFont: {size: 11.5}, displayColors: true
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: {size: 10.5} } },
+      y: { grid: { color: '#F0EDE3' }, ticks: { font: {size: 10.5} }, beginAtZero: true }
+    }
+  };
+
+  // CA cumulé
+  new Chart(document.getElementById('chCA'), {
+    type: 'line',
+    data: {
+      labels: ['S40','S44','S48','S52','S04','S08','S12','S16','S20'],
+      datasets: [
+        { label: 'CA Export réalisé', data:[12,48,142,310,520,780,1080,1380,1620], borderColor:'#1E3A8A', backgroundColor:'rgba(30,58,138,0.08)', fill:true, tension:0.35, borderWidth:2.5, pointRadius:3 },
+        { label: 'CA Local réalisé',  data:[8, 28, 75, 165, 280, 410, 560, 720, 870],  borderColor:'#0EA5E9', backgroundColor:'rgba(14,165,233,0.06)', fill:true, tension:0.35, borderWidth:2.5, pointRadius:3 },
+        { label: 'Cible budgétaire',  data:[20, 80,240, 520, 880,1280,1720,2150,2500], borderColor:'#9CA3AF', borderDash:[6,4], pointRadius:0, borderWidth:2, fill:false }
+      ]
+    },
+    options: { ...commonOpts, scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, title: {display:true, text:'KMAD cumulés', font:{size:10.5}} } } }
+  });
+
+  // SCV donut
+  new Chart(document.getElementById('chSCV'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Main-d\'œuvre','Intrants (engrais/phyto)','Eau & énergie','Conditionnement','Transport','Autres'],
+      datasets: [{
+        data: [38, 24, 14, 12, 8, 4],
+        backgroundColor: ['#9A3412','#C2410C','#EA580C','#FB923C','#FDBA74','#FED7AA'],
+        borderColor: '#FFFFFF', borderWidth: 2
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins: {
+        legend: { position:'right', labels: {boxWidth:8,boxHeight:8,usePointStyle:true,padding:12,font:{size:11}} },
+        tooltip: commonOpts.plugins.tooltip
+      }
+    }
+  });
+
+  // SMC cumulée
+  new Chart(document.getElementById('chSMC'), {
+    type: 'line',
+    data: {
+      labels: ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10'],
+      datasets: [{
+        label: 'Marge cumulée (MAD/ha)',
+        data: [-180000,-280000,-260000,-180000,-50000,120000,310000,520000,720000,890000],
+        borderColor: '#065F46',
+        backgroundColor: ctx => {
+          const c = ctx.chart.ctx.createLinearGradient(0,0,0,260);
+          c.addColorStop(0,'rgba(6,95,70,0.25)'); c.addColorStop(1,'rgba(6,95,70,0)');
+          return c;
+        },
+        fill: true, tension: 0.35, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#065F46'
+      }, {
+        label: 'Seuil de rentabilité',
+        data: [0,0,0,0,0,0,0,0,0,0],
+        borderColor: '#9A3412', borderDash:[5,4], pointRadius:0, borderWidth: 1.5, fill: false
+      }]
+    },
+    options: { ...commonOpts, scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, beginAtZero: false } } }
+  });
+
+  // Productivity radar
+  new Chart(document.getElementById('chProd'), {
+    type: 'radar',
+    data: {
+      labels: ['CA / m³ eau','CA / JH','MB / JH','CA / ha','MB / ha'],
+      datasets: [
+        { label:'Exploitation A (Tomate)', data:[112, 95, 88, 108, 92], borderColor:'#5B21B6', backgroundColor:'rgba(91,33,182,0.15)', borderWidth:2, pointBackgroundColor:'#5B21B6' },
+        { label:'Cible interne', data:[100,100,100,100,100], borderColor:'#9CA3AF', borderDash:[5,4], backgroundColor:'rgba(0,0,0,0)', borderWidth:1.5, pointRadius:0 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: { legend: commonOpts.plugins.legend, tooltip: commonOpts.plugins.tooltip },
+      scales: { r: { suggestedMin:60, suggestedMax:130, ticks:{display:false}, grid:{color:'#E8E3D6'}, angleLines:{color:'#E8E3D6'}, pointLabels:{font:{size:11}} } }
+    }
+  });
+
+  // DSO vs DPO
+  new Chart(document.getElementById('chDSODPO'), {
+    type: 'bar',
+    data: {
+      labels: ['Oct','Nov','Déc','Jan','Fév','Mar'],
+      datasets: [
+        { label:'DSO (clients)',      data:[58, 62, 68, 71, 65, 60], backgroundColor:'#155E75' },
+        { label:'DPO (fournisseurs)', data:[42, 45, 48, 50, 47, 44], backgroundColor:'#0EA5E9' }
+      ]
+    },
+    options: { ...commonOpts, scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, title: {display:true, text:'Jours', font:{size:10.5}} } } }
+  });
+
+  // Pertes Pareto
+  new Chart(document.getElementById('chPertes'), {
+    type: 'bar',
+    data: {
+      labels: ['Calibre HC','Chaîne du froid','Manutention','Maturité avancée','Maladies','Autre'],
+      datasets: [{
+        label: 'Coût (KMAD)',
+        data: [185, 142, 98, 64, 38, 22],
+        backgroundColor: ['#991B1B','#B91C1C','#DC2626','#EF4444','#F87171','#FCA5A5']
+      }]
+    },
+    options: {
+      ...commonOpts,
+      plugins: {...commonOpts.plugins, legend:{display:false}},
+      scales: { ...commonOpts.scales, y: { ...commonOpts.scales.y, title: {display:true, text:'KMAD cumulés', font:{size:10.5}} } }
+    }
+  });
+
+  // VNGO
+  new Chart(document.getElementById('chVNGO'), {
+    type: 'line',
+    data: {
+      labels: ['J1','J2','J3','J4','J5','J6','J7','J8','J9','J10','J11','J12','J13','J14'],
+      datasets: [
+        { label:'VNGO (MAD/jour/équipe)', data:[3200,3450,3820,3650,2980,3380,3920,4180,4050,3720,3580,3950,4280,4420], borderColor:'#854D0E', backgroundColor:'rgba(133,77,14,0.10)', fill:true, tension:0.4, borderWidth:2.5, pointRadius:3 },
+        { label:'Cible interne', data:Array(14).fill(3800), borderColor:'#9CA3AF', borderDash:[5,4], pointRadius:0, borderWidth:1.5, fill:false }
+      ]
+    },
+    options: commonOpts
+  });
+}
+
+/* --- Init --- */
+renderFamilies();
+renderKPICards(0, '');
+animateCount();
+window.addEventListener('load', () => setTimeout(buildCharts, 100));
+</script>
+
+</body>
+</html>
